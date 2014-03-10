@@ -26,7 +26,7 @@ class InputcontrolCommand(sublime_plugin.TextCommand):
 		elif self.view.size() < self.curSize:
 			self.curSize = self.view.size();
 		if self.state == True:
-			sublime.set_timeout_async(self.run_in_background, 100)
+			sublime.set_timeout_async(self.run_in_background, 10)
 	def find_key_unicode(self,key):
 		if key in self.keyDefine: 
 			return True
@@ -74,14 +74,24 @@ class InputcontrolCommand(sublime_plugin.TextCommand):
 		w = list(word)
 		hasChanged = False
 		del w[len(word)-1]
-		for i in range(len(w)):
-			if hasChanged:
-				break
-			for j in range(len(charSour)):
-				if w[i] == charSour[j]:
-					w[i] = charDest[j]
-					hasChanged = True
+		if len(w) > 3 :
+			for i in reversed(range(len(w))):
+				if hasChanged:
 					break
+				for j in range(len(charSour)):
+					if w[i] == charSour[j]:
+						w[i] = charDest[j]
+						hasChanged = True
+						break
+		elif len(w) <= 3:
+			for i in range(len(w)):
+				if hasChanged:
+					break
+				for j in range(len(charSour)):
+					if w[i] == charSour[j]:
+						w[i] = charDest[j]
+						hasChanged = True
+						break
 		if hasChanged :
 			word = "".join(w) 
 		return word
