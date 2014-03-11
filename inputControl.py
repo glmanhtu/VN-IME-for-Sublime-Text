@@ -1,19 +1,30 @@
 import sublime, sublime_plugin
-class InputcontrolCommand(sublime_plugin.TextCommand):
+class StartimeCommand(sublime_plugin.TextCommand):
 	curPost = 0
 	state = True
 	curSize = 0
 	curEdit = 0
+	stateIME = True
 	keyDefine = ['w','s','f','x','j','a','o','e','d','r','z']
 	def run(self, edit):
 		self.curSize = self.view.size();
 		self.curEdit = edit;
-		sublime.set_timeout_async(self.run_in_background, 0)
-	def run_in_background(self):
-		pos = self.view.sel()[0]
-		if self.view.size() > self.curSize :
+		if self.stateIME == False:
+			self.state = False	
+			self.stateIME = True 		
+			sublime.status_message("VN IME Stoped")
+			self.view.set_status('VN IME'," VN IME : OFF")
+		elif self.stateIME :
+			sublime.set_timeout_async(self.run_in_background, 0)	
+			self.stateIME = False
+			self.state = True
+			sublime.status_message("VN IME Started")
+			self.view.set_status('VN IME'," VN IME : ON")
+	def run_in_background(self): 
+		pos = self.view.sel()[0] 
+		if self.view.size() > self.curSize : 
 			a = pos.begin() - 1
-			b = pos.end()
+			b = pos.end()	
 			charRegion = sublime.Region(a, b)
 			char = self.view.substr(charRegion)
 			if self.find_key_unicode(char):
@@ -40,8 +51,8 @@ class InputcontrolCommand(sublime_plugin.TextCommand):
 			charSour = ['a','o','u']
 			charDest = ['ă','ơ','ư']
 		elif key == 's':
-			charSour = ['a','ă','â','e','ê','i','o','ơ','ô','y','u','ư']
-			charDest = ['á','ắ','ấ','é','ế','í','ó','ớ','ố','ý','ú','ứ']
+			charSour = ['a','ă','â','e','ê','i','o','ơ','ô','y','u','ư','á']
+			charDest = ['á','ắ','ấ','é','ế','í','ó','ớ','ố','ý','ú','ứ','as']
 		elif key == 'f':
 			charSour = ['a','ă','â','e','ê','i','o','ơ','ô','y','u','ư','ì']
 			charDest = ['à','ằ','ầ','è','ề','ì','ò','ờ','ồ','ỳ','ù','ừ','if']
@@ -74,6 +85,8 @@ class InputcontrolCommand(sublime_plugin.TextCommand):
 		w = list(word)
 		hasChanged = False
 		del w[len(word)-1]
+		if len(w) >6 :
+			return word
 		if len(w) > 3 :
 			for i in reversed(range(len(w))):
 				if hasChanged:
@@ -103,3 +116,7 @@ class RunchangeCommand(sublime_plugin.TextCommand):
 	def run(self, edit, a, b, final):
 		charRegion = sublime.Region(a, b)
 		self.view.replace(edit,self.view.word(charRegion),final)
+
+		
+
+		
