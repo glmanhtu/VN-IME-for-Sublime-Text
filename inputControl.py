@@ -79,11 +79,13 @@ class InputcontrolCommand(sublime_plugin.TextCommand):
 				if hasChanged:
 					break
 				for j in range(len(charSour)):
-					if w[i] == charSour[j]:
-						w[i] = charDest[j]
+					if (i==3 and w[i] in ['i']):
+						continue
+					if (w[i] == charSour[j]) :
+						w[i] = charDest[j]	
 						hasChanged = True
 						break
-		elif len(w) <= 3:
+		elif len(w) <= 3:						
 			for i in range(len(w)):
 				if hasChanged:
 					break
